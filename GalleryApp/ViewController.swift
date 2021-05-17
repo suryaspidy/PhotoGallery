@@ -11,7 +11,6 @@ import Photos
 class ViewController: UIViewController, UICollectionViewDelegate{
 
     var imageArray=[UIImage]()
-    let rePermissionBtn = UIButton()
     let blockAlertLabel = UILabel()
     
     @IBOutlet weak var collectionViewArea: UICollectionView!
@@ -24,6 +23,9 @@ class ViewController: UIViewController, UICollectionViewDelegate{
         
         permissionFunc()
         
+        let layout = UICollectionViewFlowLayout()
+        collectionViewArea.collectionViewLayout = layout
+        
         collectionViewArea.register(UINib(nibName: collectionCellNibName, bundle: nil), forCellWithReuseIdentifier: collectionCellID)
         collectionViewArea.delegate=self
         collectionViewArea.dataSource=self
@@ -34,27 +36,24 @@ class ViewController: UIViewController, UICollectionViewDelegate{
         print("raw value \(photos.rawValue)")
         if photos == .notDetermined{
             PHPhotoLibrary.requestAuthorization({status in
-                if status == .authorized{
-                    self.goToWork()
-                }else if status == .denied{
-                    print("denied")
-                    DispatchQueue.main.async { [self] in
-                        alertTextLabel.text = "Your access denied"
-                        addBloackAlertLabel()
-                    }
-                }
-                
-                else {
-                    print("other")
-                }
+                self.workOnStatus(status: status)
             })
         }
-        else if photos == .authorized {
+        workOnStatus(status: photos)
+        
+    }
+    
+    func workOnStatus(status: PHAuthorizationStatus){
+        switch status {
+        case .authorized:
             goToWork()
-        }
-        else if photos == .denied{
-            alertTextLabel.text = "Your access denied"
-            addBloackAlertLabel()
+        case .denied:
+            DispatchQueue.main.async { [self] in
+                alertTextLabel.text = "Your access denied"
+                addBloackAlertLabel()
+            }
+        default:
+            print("Other")
         }
     }
     
@@ -81,7 +80,7 @@ class ViewController: UIViewController, UICollectionViewDelegate{
             let fetchOptions = PHFetchOptions()
             fetchOptions.sortDescriptors=[NSSortDescriptor(key:"creationDate", ascending: false)]
             
-            let fetchResult: PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+        let fetchResult: PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
             print(fetchResult)
             print(fetchResult.count)
             if fetchResult.count > 0 {
@@ -102,7 +101,14 @@ class ViewController: UIViewController, UICollectionViewDelegate{
                 self.collectionViewArea.reloadData()
             }
     }
+    
+}
 
+
+extension ViewController: UICollectionViewDelegateFlowLayout{
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 100, height: 100)
+    }
 }
 
 
