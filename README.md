@@ -1,3 +1,3 @@
 # PhotoGallery
 
-![Screenshot](image1.png)
+![Main Page image](image1.png)
