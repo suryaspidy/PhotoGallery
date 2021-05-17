@@ -23,9 +23,6 @@ class ViewController: UIViewController, UICollectionViewDelegate{
         
         permissionFunc()
         
-        let layout = UICollectionViewFlowLayout()
-        collectionViewArea.collectionViewLayout = layout
-        
         collectionViewArea.register(UINib(nibName: collectionCellNibName, bundle: nil), forCellWithReuseIdentifier: collectionCellID)
         collectionViewArea.delegate=self
         collectionViewArea.dataSource=self
@@ -107,7 +104,14 @@ class ViewController: UIViewController, UICollectionViewDelegate{
 
 extension ViewController: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 100, height: 100)
+        let size = (view.frame.width/3)-15
+        return CGSize(width: size, height: size)
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 1
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 1
     }
 }
 
@@ -123,7 +127,6 @@ extension ViewController: UICollectionViewDataSource {
         cell.imageViewArea.image = img
         return cell
     }
-    
     
 }
 
